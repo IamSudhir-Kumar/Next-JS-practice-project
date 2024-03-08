@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineSearch } from "react-icons/ai"
 import { BiChevronDown } from "react-icons/bi"
 import { BsPen, BsArrowLeft } from "react-icons/bs"
@@ -48,14 +48,14 @@ export default function Story() {
   const [show, setShow] = useState(false)
   const [show3, setShow3] = useState(false)
   const [show4, setShow4] = useState(false)
-  const[menu, setMenu] = useState(false)
-  const[flipped, setFlipped] = useState(false)
+  const [menu, setMenu] = useState(false)
+  const [flipped, setFlipped] = useState(false)
   const [content, setContent] = useState(false)
-  
+
   const [check, setCheck] = useState('')
-  const[selectedValue, setSelectedValue] = useState('')
-  
-  const[stories, setStories] = useState(0)
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const [stories, setStories] = useState(0)
   const [expandedSections, setExpandedSections] = useState({})
   const [reveal, setReveal] = useState({})
 
@@ -63,8 +63,8 @@ export default function Story() {
 
 
   useEffect(() => {
-    onValue(cat, function(snapshot){
-      if(snapshot.exists()){
+    onValue(cat, function (snapshot) {
+      if (snapshot.exists()) {
         const entries = Object.entries(snapshot.val())
         setCategories(entries.map(item => item[1]))
         setNewCat(entries.map(item => item[1]))
@@ -72,7 +72,7 @@ export default function Story() {
       }
     })
   }, [])
-  
+
   useEffect(() => {
     if (randomCat.length > 0) {
       const random = Math.floor((Math.random() * categories.length))
@@ -81,130 +81,130 @@ export default function Story() {
   }, [randomCat])
 
 
-    function getCurrentDateTime(){
-      const now = new Date()
-      const day = String(now.getDate()).padStart(2, '0')
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const year = String(now.getFullYear())
-      const hours = String(now.getHours()).padStart(2, '0')
-      const minutes = String(now.getMinutes()).padStart(2, '0')
-      const seconds = String(now.getSeconds()).padStart(2, '0')
-  
-      return `${day}-${month}-${year}-${hours}-${minutes}-${seconds}`
-    }
+  function getCurrentDateTime() {
+    const now = new Date()
+    const day = String(now.getDate()).padStart(2, '0')
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const year = String(now.getFullYear())
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
 
-  function handleValue(e){
+    return `${day}-${month}-${year}-${hours}-${minutes}-${seconds}`
+  }
+
+  function handleValue(e) {
     const name = e.target.name
     const value = e.target.value
-    
-    if(name === 'subject'){
+
+    if (name === 'subject') {
       setSubject(value)
     }
-    
-    else if(name === 'description'){
+
+    else if (name === 'description') {
       setDescribe(value)
     }
   }
-  
-  function handleSearch(e){
+
+  function handleSearch(e) {
     const searchValue = e.target.value
     setSearchText(searchValue)
-    
+
     const results = performSearch(searchValue)
     setSearchResults(results)
-    
-    
+
+
   }
-  
-  function handleSearch2(e){
+
+  function handleSearch2(e) {
     setSearch(e.target.value)
     setMenu(false)
     setShow3(true)
-    
+
     const results = performSearch2(e.target.value)
     setSearchResults2(results)
   }
-  
-  function handleCategorySelect(category){
+
+  function handleCategorySelect(category) {
     setSelectedCategory(category.toUpperCase())
     setSearchText('')
     setSearchResults([])
     setShow(false)
   }
 
-  function handleCategorySelect2(category){
+  function handleCategorySelect2(category) {
     setSelectedValue('')
     setSearch(category)
     setSearchResults2([])
     searchBar(category)
   }
 
-  function performSearch(searchValue){
-    const filteredCategories = categories && categories.filter(category => 
+  function performSearch(searchValue) {
+    const filteredCategories = categories && categories.filter(category =>
       category.toLowerCase().startsWith(searchValue.toLowerCase()))
 
     return filteredCategories
   }
 
-  function performSearch2(searchValue){
-    const filteredCategories = randomCat && randomCat.filter(category => 
+  function performSearch2(searchValue) {
+    const filteredCategories = randomCat && randomCat.filter(category =>
       category.toLowerCase().startsWith(searchValue.toLowerCase()))
 
     return filteredCategories
   }
 
-  function clear(){
+  function clear() {
     setSubject('')
     setDescribe('')
     setSearchText('')
     setSelectedCategory('')
   }
 
-  function handleSubmit(e){
+  function handleSubmit(e) {
     const random = ((Math.random() * 4))
     e.preventDefault()
-    const Data ={
+    const Data = {
       subject: subject,
       description: describe,
       category: selectedCategory,
       timeStamp: getCurrentDateTime(),
-      id: random 
+      id: random
     }
 
-    if(subject && describe && selectedCategory){
+    if (subject && describe && selectedCategory) {
       push(ref(database, `List/${selectedCategory}`), Data)
 
-      if(selectedCategory){
-        if(newCat && !newCat.some((item) => (item.toLowerCase() === selectedCategory.toLowerCase()))){
-          push(cat , selectedCategory)
+      if (selectedCategory) {
+        if (newCat && !newCat.some((item) => (item.toLowerCase() === selectedCategory.toLowerCase()))) {
+          push(cat, selectedCategory)
         }
         clear()
       }
     }
 
     // setContent(false)
-    
+
   }
 
-  function handleShow(){
+  function handleShow() {
     setShow(prev => !prev)
   }
 
-  function handleAdd(){
+  function handleAdd() {
     setSelectedCategory(searchText.toUpperCase())
     setSearchText('')
     setSearchResults([])
     setShow(false)
 
-    if(searchText){
-      if(initialCategories && !initialCategories.some((item) => (item.toLowerCase() === searchText.toLowerCase()))){
+    if (searchText) {
+      if (initialCategories && !initialCategories.some((item) => (item.toLowerCase() === searchText.toLowerCase()))) {
         setCategories((prevCategories) => [...prevCategories, searchText])
         initialCategories.push(searchText)
       }
     }
   }
 
-  function searchBar(cat){
+  function searchBar(cat) {
     cat && setMenu(true)
     setShow3(false)
     setShow4(false)
@@ -212,16 +212,16 @@ export default function Story() {
 
 
 
-  function handleClick(){
+  function handleClick() {
     setShow3(prev => !prev)
     setShow4(false)
   }
 
-  function handleClick2(){
+  function handleClick2() {
     setShow4(prev => !prev)
     setShow3(false)
   }
-  
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth)
@@ -235,87 +235,87 @@ export default function Story() {
   }, [])
 
   useEffect(() => {
-    windowWidth >425 ? setContent(true) : setContent(false)
+    windowWidth > 425 ? setContent(true) : setContent(false)
   }, [windowWidth])
 
-  function handleflip(){
+  function handleflip() {
     setFlipped(prev => !prev)
   }
 
-  
-  function handleChildValue(value){
+
+  function handleChildValue(value) {
     setSelectedValue(value)
     setSearch('')
   }
 
-  
-  
-  function formattedDate(dateTimeString){
+
+
+  function formattedDate(dateTimeString) {
     const dateTimeParts = dateTimeString.split('-')
-    
+
     const day = dateTimeParts[0]
     const month = dateTimeParts[1]
     const year = dateTimeParts[2]
-    
+
     return `${day}-${month}-${year}`
-    
+
   }
-  
-  function formattedDate2(dateTimeString){
+
+  function formattedDate2(dateTimeString) {
     const dateTimeParts = dateTimeString.split('-')
-    
+
     const day = dateTimeParts[0]
     const month = dateTimeParts[1]
     const year = dateTimeParts[2]
-    
+
     return `${month}-${day}-${year}`
-    
+
   }
-  
-  function formattedTime(dateTimeString){
+
+  function formattedTime(dateTimeString) {
     const dateTimeParts = dateTimeString.split('-')
-    
+
     const hours = dateTimeParts[3]
     const minutes = dateTimeParts[4]
     const seconds = dateTimeParts[5]
-    
+
     return `${hours}-${minutes}-${seconds}`
-    
+
   }
 
   useEffect(() => {
-    if(windowWidth>425){
+    if (windowWidth > 425) {
       setReveal({})
     }
 
-    else if(windowWidth<=425){
-        setShow4(false)
-        setShow(false)
+    else if (windowWidth <= 425) {
+      setShow4(false)
+      setShow(false)
     }
   }, [windowWidth])
 
   function togglePara(itemId) {
-   windowWidth > 425 ?  
-   (setExpandedSections((prevExpandedSections) => ({
-     ...prevExpandedSections,
-     [itemId]: !prevExpandedSections[itemId],
-   }))) : 
+    windowWidth > 425 ?
+      (setExpandedSections((prevExpandedSections) => ({
+        ...prevExpandedSections,
+        [itemId]: !prevExpandedSections[itemId],
+      }))) :
 
-   (setReveal((prevReveal) => ({
-    ...prevReveal,
-    [itemId]: !prevReveal[itemId],
-  })))
+      (setReveal((prevReveal) => ({
+        ...prevReveal,
+        [itemId]: !prevReveal[itemId],
+      })))
   }
 
   const revealMain = {
     position: 'absolute',
     top: '0px',
-    left: windowWidth > 375 ? '-75px' : windowWidth > 320 ?  '-90px' : '-80px',
-    width:  windowWidth > 320 ? '283px' : '250px',
+    left: windowWidth > 375 ? '-75px' : windowWidth > 320 ? '-90px' : '-80px',
+    width: windowWidth > 320 ? '283px' : '250px',
     height: '257px',
     boxShadow: '1px 1px 0px #000000',
   }
-  
+
   const revealhead = {
     alignSelf: 'center',
     width: '194px',
@@ -330,14 +330,14 @@ export default function Story() {
     fontSize: '0.625rem'
   }
 
-  function goback(){
+  function goback() {
     setReveal({})
   }
 
 
   useEffect(() => {
-    if(selectedValue){
-      onValue(ref(database, `List/${selectedValue.toUpperCase()}`), function(snapshot) {
+    if (selectedValue) {
+      onValue(ref(database, `List/${selectedValue.toUpperCase()}`), function (snapshot) {
         if (snapshot.exists()) {
           setStories(Object.entries(snapshot.val()).length)
           setMappable(Object.entries(snapshot.val()))
@@ -345,12 +345,12 @@ export default function Story() {
       })
     }
     setReveal({})
-    
+
   }, [selectedValue])
-  
+
   useEffect(() => {
-     if(check){
-      onValue(ref(database, `List/${check.toUpperCase()}`), function(snapshot) {
+    if (check) {
+      onValue(ref(database, `List/${check.toUpperCase()}`), function (snapshot) {
         if (snapshot.exists()) {
           setStories(Object.entries(snapshot.val()).length)
           setMappable(Object.entries(snapshot.val()))
@@ -362,32 +362,32 @@ export default function Story() {
 
   }, [check])
 
-  
+
   useEffect(() => {
-    if(search){
-      onValue(ref(database, `List/${search.toUpperCase()}`), function(snapshot) {
+    if (search) {
+      onValue(ref(database, `List/${search.toUpperCase()}`), function (snapshot) {
         if (snapshot.exists()) {
           setStories(Object.entries(snapshot.val()).length)
           setMappable(Object.entries(snapshot.val()))
         }
-      })      
+      })
     }
     setReveal({})
   }, [search])
 
 
-  function showContent(){
+  function showContent() {
     setContent(prev => !prev)
   }
 
 
-  function paragraph(item){
+  function paragraph(item) {
 
-    if(item){
+    if (item) {
       const words = item[1].split(' ')
       const isExpanded = expandedSections[item[2]]
       const isRevealed = reveal[item[2]]
-  
+
       if (words.length > 24 && !isExpanded) {
         return (
           <div className='item-section' key={item[2]} style={isRevealed ? revealMain : {}}>
@@ -395,56 +395,56 @@ export default function Story() {
               <h3>{item[0]}</h3>
               <p>{formattedDate(item[4])}</p>
             </div>
-            {isRevealed && <BsArrowLeft className='left-arrow' onClick={goback}/>}
+            {isRevealed && <BsArrowLeft className='left-arrow' onClick={goback} />}
             <h2 style={isRevealed ? revealhead : {}}>{item[3]}</h2>
             <div className='show-para'>
-              {isRevealed ? <p style={isRevealed ? revealPara : {}}>{item[1].slice(0, item[1].length)}...</p> : 
-              <p>{item[1].slice(0, 154)}...</p>}
+              {isRevealed ? <p style={isRevealed ? revealPara : {}}>{item[1].slice(0, item[1].length)}...</p> :
+                <p>{item[1].slice(0, 154)}...</p>}
             </div>
-              {windowWidth > 425 ? <span className='read-more' onClick={() => togglePara([item[2]])}>
-                Read more...
-              </span> :
+            {windowWidth > 425 ? <span className='read-more' onClick={() => togglePara([item[2]])}>
+              Read more...
+            </span> :
 
               !isRevealed && <span className='read-more' onClick={() => togglePara([item[2]])}>
-              Read more...
-            </span>}
+                Read more...
+              </span>}
           </div>
         )
       }
-  
-      else{
+
+      else {
         return (
           <div className='item-section' key={item[2]} style={isRevealed ? revealMain : {}}>
             <div className='item-category'>
               <h3>{item[0]}</h3>
               <p>{formattedDate(item[4])}</p>
             </div>
-            {isRevealed && <BsArrowLeft className='left-arrow' onClick={goback}/>}
+            {isRevealed && <BsArrowLeft className='left-arrow' onClick={goback} />}
             <h2 style={isRevealed ? revealhead : {}}>{item[3]}</h2>
             <div className='show-para'>
               <p style={isRevealed ? revealPara : {}}>{item[1]}</p>
             </div>
-              {words.length > 24 && windowWidth > 425 ? (
-                <span className='read-more' onClick={() => togglePara(item[2])}>
-                  Read less
-                </span>
-              ) :
+            {words.length > 24 && windowWidth > 425 ? (
+              <span className='read-more' onClick={() => togglePara(item[2])}>
+                Read less
+              </span>
+            ) :
 
-             (words.length > 24 && !isRevealed) && <span className='read-more' onClick={() => togglePara(item[2])}>
-              Read more...
-            </span>}
+              (words.length > 24 && !isRevealed) && <span className='read-more' onClick={() => togglePara(item[2])}>
+                Read more...
+              </span>}
           </div>
         )
       }
     }
   }
 
-  function sorted(mappable){
+  function sorted(mappable) {
     const sortedMappable = mappable.sort((a, b) => {
       const dateA = new Date(formattedDate2(Object.values(a[1])[4]))
       const dateB = new Date(formattedDate2(Object.values(b[1])[4]))
 
-      if(dateA < dateB){
+      if (dateA < dateB) {
         return flipped ? 1 : -1
       }
 
@@ -461,7 +461,7 @@ export default function Story() {
       if (timeA > timeB) {
         return flipped ? -1 : 1;
       }
-     })
+    })
 
     return sortedMappable.map((items, index) => {
       const random = ((Math.random() * 4))
@@ -479,82 +479,82 @@ export default function Story() {
       <div className='story-section'>
 
         <form className='section-1' >
-            <div className='section-1-head'>
-              <h1>Write your own story</h1>
-              <BsPen className='pen' onClick={showContent}/>
+          <div className='section-1-head'>
+            <h1>Write your own story</h1>
+            <BsPen className='pen' onClick={showContent} />
+          </div>
+          {content && <div className='section-1-content' >
+            <div className="subject">
+              <label htmlFor="subject"><h3>Topic</h3></label>
+              <input id="subject"
+                name="subject"
+                type='text'
+                placeholder='write the topic for your story '
+                value={subject}
+                onChange={(e) => handleValue(e)} required />
             </div>
-            { content && <div className='section-1-content' >
-              <div className="subject">
-                  <label htmlFor="subject"><h3>Topic</h3></label>
-                  <input id="subject"
-                      name="subject" 
-                      type='text'
-                      placeholder='write the topic for your story ' 
-                      value={subject}
-                      onChange={(e) => handleValue(e)} required/>
-              </div>
 
-              <div className="description">
-                  <label htmlFor="describe"><h3>Description</h3></label>
-                  <textarea 
-                    value={describe} 
-                    name='description'
-                    id='describe'
-                    placeholder='write what your story is about here'
-                    onChange={(e) => handleValue(e)} required/>
-              </div>
+            <div className="description">
+              <label htmlFor="describe"><h3>Description</h3></label>
+              <textarea
+                value={describe}
+                name='description'
+                id='describe'
+                placeholder='write what your story is about here'
+                onChange={(e) => handleValue(e)} required />
+            </div>
 
-              <div className='selectCategory'>
+            <div className='selectCategory'>
 
-                <div className='select-btn' onClick={handleShow}>
-                  {selectedCategory ? <span>{selectedCategory.toUpperCase()}</span> : 
+              <div className='select-btn' onClick={handleShow}>
+                {selectedCategory ? <span>{selectedCategory.toUpperCase()}</span> :
                   <span>Select a category</span>}
-                  <BiChevronDown className='down'/>
+                <BiChevronDown className='down' />
+              </div>
+
+              {show && <div className='content' >
+                <div className='search'>
+                  <AiOutlineSearch className='search-btn' />
+                  <input
+                    type="text"
+                    id='category'
+                    placeholder="Search"
+                    value={searchText}
+                    onChange={handleSearch} required />
                 </div>
-                
-                {show && <div className='content' >
-                  <div className='search'>
-                    <AiOutlineSearch className='search-btn'/>
-                    <input
-                      type="text"
-                      id='category'
-                      placeholder="Search"
-                      value={searchText}
-                      onChange={handleSearch} required/>
-                  </div>
 
 
-                  {searchText.length === 0 ? 
-                    (<ul className='search-list'>
+                {searchText.length === 0 ?
+                  (<ul className='search-list'>
                     {initialCategories.map(category => (
                       <li key={category} onClick={() => handleCategorySelect(category)}>
                         {category}
-                        </li>
+                      </li>
                     ))}
-                    </ul>) :
-                    searchResults.length > 0 ? (
+                  </ul>) :
+                  searchResults.length > 0 ? (
                     <ul className='search-list'>
-                        {searchResults.map(category => (
-                          <li key={category} onClick={() => handleCategorySelect(category)}>
-                            {category}
-                            </li>
-                        ))}
-                        </ul>
-                    ) :
+                      {searchResults.map(category => (
+                        <li key={category} onClick={() => handleCategorySelect(category)}>
+                          {category}
+                        </li>
+                      ))}
+                    </ul>
+                  ) :
                     <ul className='search-list'>
                       <li onClick={handleAdd}>Add new category</li>
                     </ul>}
 
-                  </div>}
-              </div>
+              </div>}
+            </div>
 
-              <button type='submit' className='submit-btn' onClick={handleSubmit}>
-                  PUBLISH YOUR STORY
-              </button>
-            </div>}
+            <button type='submit' className='submit-btn' onClick={handleSubmit}>
+              PUBLISH YOUR STORY
+            </button>
+          </div>}
         </form>
 
-        <div className='middle-line'/>
+        <div className='middle-line' />
 
         <section className='section-2'>
 
@@ -564,92 +564,93 @@ export default function Story() {
             <div className='looking'>
               <div className='choose'>
                 <label htmlFor='choose'><h3>What are you looking for?</h3></label>
+                <div className='filter'>
+                  <h1 className='total-story'><span>{stories === 1 ? `${stories} story` : stories === 0 ? `0 story` : `${stories} stories`}</span> for you to read</h1>
+                  <div className='flex-filter'>
+                    <h2 className='filter-heading'>Sort:
+                      <span onClick={handleflip}>
+                        {flipped ? `Newest to Oldest` : `Oldest to Newest`}
+                      </span>
+                    </h2>
+                    <CgArrowsExchangeAltV className='filterarrow' onClick={handleflip} />
+                  </div>
+                </div>
                 <input
-                    type="text"
-                    id='choose'
-                    placeholder="Browse a Category"
-                    value={search}
-                    onClick={handleClick}
-                    onChange={handleSearch2} required/>
-                <BiChevronDown className='btn-2' onClick={handleClick2}/>
+                  type="text"
+                  id='choose'
+                  placeholder="Browse a Category"
+                  value={search}
+                  onClick={handleClick}
+                  onChange={handleSearch2} required />
+                <BiChevronDown className='btn-2' onClick={handleClick2} />
               </div>
-              
-            
+
+
               {(show4) ? (
                 <ul className='search-list search-list-2'>
-                {initialCategories.map(category => (
-                  <li key={category} onClick={() => handleCategorySelect2(category)}>
-                    {category}
+                  {initialCategories.map(category => (
+                    <li key={category} onClick={() => handleCategorySelect2(category)}>
+                      {category}
                     </li>
-                ))}
+                  ))}
                 </ul>
               ) :
-              (show3 && search.length === 0) ? (
-                <ul className='search-list search-list-2'>
-                {initialCategories.map(category => (
-                  <li key={category} onClick={() => handleCategorySelect2(category)}>
-                    {category}
-                    </li>
-                ))}
-                </ul>
-              ) :         
-              ((show3 && searchResults2.length > 0)) && (
-                <ul className='search-list search-list-2'>
-                    {searchResults2.map(category => (
+                (show3 && search.length === 0) ? (
+                  <ul className='search-list search-list-2'>
+                    {initialCategories.map(category => (
                       <li key={category} onClick={() => handleCategorySelect2(category)}>
                         {category}
-                        </li>
+                      </li>
                     ))}
+                  </ul>
+                ) :
+                  ((show3 && searchResults2.length > 0)) && (
+                    <ul className='search-list search-list-2'>
+                      {searchResults2.map(category => (
+                        <li key={category} onClick={() => handleCategorySelect2(category)}>
+                          {category}
+                        </li>
+                      ))}
                     </ul>
-                )}
-            </div>          
-          </div>
-
-          <div className='filter'>
-            <h1 className='total-story'><span>{stories === 1 ? `${stories} story` : stories === 0 ? `0 story` : `${stories} stories`}</span> for you to read</h1>
-            <div className='flex-filter'>
-              <h2 className='filter-heading'>Sort: 
-                <span onClick={handleflip}>
-                  {flipped ? `Newest to Oldest` : `Oldest to Newest`}
-                  </span>
-              </h2>
-              <CgArrowsExchangeAltV  className='filterarrow' onClick={handleflip}/>
+                  )}
             </div>
           </div>
-          
-          { windowWidth > 425 ? <div>
-            {selectedValue &&  (
+
+
+
+          {windowWidth > 425 ? <div>
+            {selectedValue && (
               <div className='container'>
                 <section className='item-section-main'>
                   <div className='item-section-container'>
                     {(check && mappable) && sorted(mappable)}
-                </div>
-              </section>
+                  </div>
+                </section>
               </div>
             )}
 
-              {(!menu || search.length === 0) &&  (<div className='container'>
-                <section className='item-section-main'>
-                  <div className='item-section-container'>
-                    {(check && mappable) && sorted(mappable)}
-                  </div>
-                </section>
-              </div>) 
-              }
+            {(!menu || search.length === 0) && (<div className='container'>
+              <section className='item-section-main'>
+                <div className='item-section-container'>
+                  {(check && mappable) && sorted(mappable)}
+                </div>
+              </section>
+            </div>)
+            }
 
-              {(search.length > 0 && menu) &&  (<div className='container'>
-                <section className='item-section-main'>
-                  <div className='item-section-container'>
-                    {sorted(mappable)}
-                  </div>
-                </section>
-            </div>) 
+            {(search.length > 0 && menu) && (<div className='container'>
+              <section className='item-section-main'>
+                <div className='item-section-container'>
+                  {sorted(mappable)}
+                </div>
+              </section>
+            </div>)
             }
           </div>
-          : 
-          (<div className='container'>
-            <section className='item-section-main'>
-                <Swiper 
+            :
+            (<div className='container'>
+              <section className='item-section-main'>
+                <Swiper
                   effect="coverflow"
                   // grabCursor='true'
                   centeredSlides='true'
@@ -661,47 +662,48 @@ export default function Story() {
                     modifier: 1,
                     slideShadows: false,
                   }}
-                  // onSwiper={handleSwiperInit}
-                  // onSlideChange={handleSlideChange}
+                // onSwiper={handleSwiperInit}
+                // onSlideChange={handleSlideChange}
                 >
                   <div className='swiper-wrapper'>
-                    {(() => { const sortedMappable = mappable.sort((a, b) => {
-                      const dateA = new Date(formattedDate2(Object.values(a[1])[4]))
-                      const dateB = new Date(formattedDate2(Object.values(b[1])[4]))
+                    {(() => {
+                      const sortedMappable = mappable.sort((a, b) => {
+                        const dateA = new Date(formattedDate2(Object.values(a[1])[4]))
+                        const dateB = new Date(formattedDate2(Object.values(b[1])[4]))
 
-                      if(dateA < dateB){
-                        return flipped ? 1 : -1
-                      }
+                        if (dateA < dateB) {
+                          return flipped ? 1 : -1
+                        }
 
-                      if (dateA > dateB) {
-                        return flipped ? -1 : 1;
-                      }
+                        if (dateA > dateB) {
+                          return flipped ? -1 : 1;
+                        }
 
-                      const timeA = formattedTime(Object.values(a[1])[4]);
-                      const timeB = formattedTime(Object.values(b[1])[4]);
+                        const timeA = formattedTime(Object.values(a[1])[4]);
+                        const timeB = formattedTime(Object.values(b[1])[4]);
 
-                      if (timeA < timeB) {
-                        return flipped ? 1 : -1;
-                      }
-                      if (timeA > timeB) {
-                        return flipped ? -1 : 1;
-                      }
-                    })
+                        if (timeA < timeB) {
+                          return flipped ? 1 : -1;
+                        }
+                        if (timeA > timeB) {
+                          return flipped ? -1 : 1;
+                        }
+                      })
 
-                    return sortedMappable.map((items, index) => {
-                      const random = ((Math.random() * 4))
-                      return (
-                        <SwiperSlide key={random} className='swiper-slide'>
-                          {paragraph(Object.values(items[1]))}
-                        </SwiperSlide>
-                      )
-                    })
+                      return sortedMappable.map((items, index) => {
+                        const random = ((Math.random() * 4))
+                        return (
+                          <SwiperSlide key={random} className='swiper-slide'>
+                            {paragraph(Object.values(items[1]))}
+                          </SwiperSlide>
+                        )
+                      })
                     })()}
                   </div>
                 </Swiper>
-            </section>
-          </div>)}
-        </section>       
+              </section>
+            </div>)}
+        </section>
       </div>
     </div>
   )

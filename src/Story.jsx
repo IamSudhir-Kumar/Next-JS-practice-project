@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState , useRef} from 'react'
 import { AiOutlineSearch } from "react-icons/ai"
 import { BiChevronDown } from "react-icons/bi"
 import { BsPen, BsArrowLeft } from "react-icons/bs"
@@ -28,6 +28,7 @@ const cat = ref(database, 'Category')
 let initialCategories = ['FIGMA', 'FOOD', 'ENGINEERING', 'CINEMA', 'JOURNALISM']
 
 export default function Story() {
+  const [open, setOpen] = useState(false);
   const [swiper, setSwiper] = useState(null);
 
   const [subject, setSubject] = useState('')
@@ -187,8 +188,10 @@ export default function Story() {
   }
 
   function handleShow() {
-    setShow(prev => !prev)
+    setOpen(open => !open);
+      setShow(prev => !prev)
   }
+  
 
   function handleAdd() {
     setSelectedCategory(searchText.toUpperCase())
@@ -472,7 +475,23 @@ export default function Story() {
       )
     })
   }
+  
+   
+    let menuRef = useRef();
 
+    useEffect(() => {
+      let handler = (event) => {
+        if (!menuRef.current.contains(event.target)) {
+          setOpen(false);
+          console.log("clickedOutside")
+        }
+      };
+      document.addEventListener("mousedown", handler);
+      return () => {
+        document.removeEventListener("mousedown", handler);
+      };
+    });
+  
   return (
     <div className='flex'>
       <Popular onChildValue={handleChildValue} />
@@ -504,9 +523,9 @@ export default function Story() {
                 onChange={(e) => handleValue(e)} required />
             </div>
 
-            <div className='selectCategory'>
+            <div className='selectCategory' ref={menuRef}>
 
-              <div className='select-btn' onClick={handleShow}>
+              <div className='select-btn' open={open} onClick = {handleShow} >
                 {selectedCategory ? <span>{selectedCategory.toUpperCase()}</span> :
                   <span>Select a category</span>}
                 <BiChevronDown className='down' />

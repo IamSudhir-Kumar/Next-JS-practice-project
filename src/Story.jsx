@@ -14,6 +14,7 @@ SwiperCore.use([EffectCoverflow]);
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import CheckOutsideClick from './CheckOutsideClick'
 
 const appSetting = {
   databaseURL: "https://assignment-14ae6-default-rtdb.firebaseio.com/"
@@ -62,6 +63,9 @@ export default function Story() {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   useEffect(() => {
     onValue(cat, function (snapshot) {
@@ -476,22 +480,6 @@ export default function Story() {
     })
   }
   
-   
-    let menuRef = useRef();
-
-    useEffect(() => {
-      let handler = (event) => {
-        if (!menuRef.current.contains(event.target)) {
-          setOpen(false);
-          console.log("clickedOutside")
-        }
-      };
-      document.addEventListener("mousedown", handler);
-      return () => {
-        document.removeEventListener("mousedown", handler);
-      };
-    });
-  
   return (
     <div className='flex'>
       <Popular onChildValue={handleChildValue} />
@@ -522,50 +510,54 @@ export default function Story() {
                 placeholder='write what your story is about here'
                 onChange={(e) => handleValue(e)} required />
             </div>
+            
+            <div className='selectCategory'>
+  <CheckOutsideClick onClickOutside={handleClose}>
+    <div className='select-btn' open={open} handleClose={handleClose} onClick={handleShow}>
+      {selectedCategory ? <span>{selectedCategory.toUpperCase()}</span> : <span>Select a category</span>}
+      <BiChevronDown className='down' />
+    </div>
 
-            <div className='selectCategory' ref={menuRef}>
+    {show && (
+      <div className='content'>
+        <div className='search'>
+          <AiOutlineSearch className='search-btn' />
+          <input
+            type="text"
+            id='category'
+            placeholder="Search"
+            value={searchText}
+            onChange={handleSearch}
+            required
+          />
+        </div>
 
-              <div className='select-btn' open={open} onClick = {handleShow} >
-                {selectedCategory ? <span>{selectedCategory.toUpperCase()}</span> :
-                  <span>Select a category</span>}
-                <BiChevronDown className='down' />
-              </div>
+        {searchText.length === 0 ? (
+          <ul className='search-list'>
+            {initialCategories.map(category => (
+              <li key={category} onClick={() => handleCategorySelect(category)}>
+                {category}
+              </li>
+            ))}
+          </ul>
+        ) : searchResults.length > 0 ? (
+          <ul className='search-list'>
+            {searchResults.map(category => (
+              <li key={category} onClick={() => handleCategorySelect(category)}>
+                {category}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className='search-list'>
+            <li onClick={handleAdd}>Add new category</li>
+          </ul>
+        )}
+      </div>
+    )}
+  </CheckOutsideClick>
+</div>
 
-              {show && <div className='content' >
-                <div className='search'>
-                  <AiOutlineSearch className='search-btn' />
-                  <input
-                    type="text"
-                    id='category'
-                    placeholder="Search"
-                    value={searchText}
-                    onChange={handleSearch} required />
-                </div>
-
-
-                {searchText.length === 0 ?
-                  (<ul className='search-list'>
-                    {initialCategories.map(category => (
-                      <li key={category} onClick={() => handleCategorySelect(category)}>
-                        {category}
-                      </li>
-                    ))}
-                  </ul>) :
-                  searchResults.length > 0 ? (
-                    <ul className='search-list'>
-                      {searchResults.map(category => (
-                        <li key={category} onClick={() => handleCategorySelect(category)}>
-                          {category}
-                        </li>
-                      ))}
-                    </ul>
-                  ) :
-                    <ul className='search-list'>
-                      <li onClick={handleAdd}>Add new category</li>
-                    </ul>}
-
-              </div>}
-            </div>
 
             <button type='submit' className='submit-btn' onClick={handleSubmit}>
               PUBLISH YOUR STORY
